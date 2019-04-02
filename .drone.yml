@@ -1,6 +1,25 @@
 ---
-pipeline:
-  build:
-    image: golang:1.10
-    commands:
-    - make test
+kind: pipeline
+name: default
+
+steps:
+- name: test
+  image: redis
+  commands:
+  - sleep 5
+  - redis-cli -h redis ping
+  - redis-cli -h redis set FOO bar
+  - redis-cli -h redis get FOO
+
+- name: build
+  image: golang:1.10
+  commands:
+  - make test
+  - sleep 300
+
+services:
+- name: redis
+  image: redis
+  ports:
+  - 6379
+
